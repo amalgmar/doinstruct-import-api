@@ -3,6 +3,7 @@
     "@aws-sdk/client-dynamodb": "^3.797.0",
     "@aws-sdk/lib-dynamodb": "^3.797.0",
     "@tsconfig/node18": "^18.2.4",
+    "libphonenumber-js": "^1.12.7",
     "sst": "^2.48.5",
     "typescript": "^5.8.3"
   },
