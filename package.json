@@ -1,11 +1,15 @@
 {
+  "name": "doinstruct-import-api",
+  "version": "1.0.0",
+  "type": "module",
   "scripts": {
     "dev": "npx sst@2 dev",
     "deploy": "npx sst@2 deploy",
     "remove": "npx sst@2 remove",
     "test": "vitest run",
     "test:watch": "vitest watch",
-    "load-test": "node scripts/load-test.js"
+    "load-test": "node scripts/load-test.js",
+    "lint": "eslint src stacks sst.config.ts --ext .ts"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.797.0",
@@ -14,10 +18,14 @@
     "libphonenumber-js": "^1.12.7",
     "node-fetch": "^3.3.2",
     "sst": "^2.48.5",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.31.0"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.149",
+    "@typescript-eslint/eslint-plugin": "^8.31.0",
+    "@typescript-eslint/parser": "^8.31.0",
+    "eslint": "^9.25.1",
     "vitest": "^3.1.2"
   }
 }

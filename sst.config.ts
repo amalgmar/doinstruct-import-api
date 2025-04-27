@@ -2,7 +2,7 @@ import { SSTConfig } from "sst";
 import { API } from "./stacks/MyStack";
 
 const config: SSTConfig = {
-    config(_input) {
+    config() {
         return {
             name: "doinstruct-import-api",
             region: "us-east-1",
