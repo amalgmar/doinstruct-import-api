@@ -3,5 +3,8 @@
     "@tsconfig/node18": "^18.2.4",
     "sst": "^2.48.5",
     "typescript": "^5.8.3"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.149"
   }
 }
