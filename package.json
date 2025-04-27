@@ -4,13 +4,15 @@
     "deploy": "npx sst@2 deploy",
     "remove": "npx sst@2 remove",
     "test": "vitest run",
-    "test:watch": "vitest watch"
+    "test:watch": "vitest watch",
+    "load-test": "node scripts/load-test.js"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.797.0",
     "@aws-sdk/lib-dynamodb": "^3.797.0",
     "@tsconfig/node18": "^18.2.4",
     "libphonenumber-js": "^1.12.7",
+    "node-fetch": "^3.3.2",
     "sst": "^2.48.5",
     "typescript": "^5.8.3"
   },
