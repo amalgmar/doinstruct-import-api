@@ -1,4 +1,11 @@
 {
+  "scripts": {
+    "dev": "npx sst@2 dev",
+    "deploy": "npx sst@2 deploy",
+    "remove": "npx sst@2 remove",
+    "test": "vitest run",
+    "test:watch": "vitest watch"
+  },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.797.0",
     "@aws-sdk/lib-dynamodb": "^3.797.0",
@@ -8,6 +15,7 @@
     "typescript": "^5.8.3"
   },
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.149"
+    "@types/aws-lambda": "^8.10.149",
+    "vitest": "^3.1.2"
   }
 }
