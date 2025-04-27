@@ -20,6 +20,14 @@ export function API({ stack }: StackContext) {
 
     // API Gateway
     const api = new Api(stack, "Api", {
+        defaults: {
+            function: {
+                environment: {
+                    EMPLOYEES_TABLE: employeesTable.tableName,
+                    IMPORTREPORTS_TABLE: reportTable.tableName,
+                },
+            },
+        },
         routes: {
             "POST /import": "src/import.handler",
             "GET /report/{importId}": "src/report.handler",

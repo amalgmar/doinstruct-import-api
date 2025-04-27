@@ -1,6 +1,14 @@
 // src/import.ts
 import { APIGatewayProxyHandler } from "aws-lambda";
 import { v4 as uuidv4 } from "uuid";
+import { DynamoDBDocumentClient, BatchWriteCommand } from "@aws-sdk/lib-dynamodb";
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { PutCommand } from "@aws-sdk/lib-dynamodb";
+
+const client = DynamoDBDocumentClient.from(new DynamoDBClient());
+
+const EMPLOYEES_TABLE = process.env.EMPLOYEES_TABLE!;
+const IMPORTREPORTS_TABLE = process.env.IMPORTREPORTS_TABLE!;
 
 interface Employee {
     employeeId: string;
@@ -21,18 +29,10 @@ export const handler: APIGatewayProxyHandler = async (event) => {
             };
         }
 
-        if (employees.length > 10000) {
-            return {
-                statusCode: 400,
-                body: JSON.stringify({ message: "Employee batch too large" }),
-            };
-        }
-
-        const importId = uuidv4(); // generate a new import session ID
-
-        // Basic validation
+        const importId = uuidv4();
         const seenIds = new Set();
         const seenPhones = new Set();
+        const validEmployees: Employee[] = [];
         const errors: any[] = [];
 
         for (const employee of employees) {
@@ -50,15 +50,62 @@ export const handler: APIGatewayProxyHandler = async (event) => {
             seenIds.add(employeeId);
             if (phone) seenPhones.add(phone);
 
-            // 🛠 Here later we will save into DynamoDB
+            validEmployees.push({
+                employeeId,
+                firstName,
+                lastName,
+                phone,
+            });
         }
+
+        // Batch Write to Employees Table
+        const batches = [];
+        for (let i = 0; i < validEmployees.length; i += 25) {
+            const batch = validEmployees.slice(i, i + 25).map((emp) => ({
+                PutRequest: {
+                    Item: {
+                        accountId,
+                        employeeId: emp.employeeId,
+                        firstName: emp.firstName,
+                        lastName: emp.lastName,
+                        phone: emp.phone || null,
+                    },
+                },
+            }));
+            batches.push(batch);
+        }
+
+        for (const batch of batches) {
+            await client.send(
+                new BatchWriteCommand({
+                    RequestItems: {
+                        [EMPLOYEES_TABLE]: batch,
+                    },
+                })
+            );
+        }
+
+        // Save import summary
+        await client.send(
+            new PutCommand({
+                TableName: IMPORTREPORTS_TABLE,
+                Item: {
+                    importId,
+                    accountId,
+                    importedCount: validEmployees.length,
+                    errorCount: errors.length,
+                    errors,
+                    createdAt: new Date().toISOString(),
+                },
+            })
+        );
 
         return {
             statusCode: 202,
             body: JSON.stringify({
                 importId,
                 totalReceived: employees.length,
-                totalValid: employees.length - errors.length,
+                totalValid: validEmployees.length,
                 totalErrors: errors.length,
                 errors,
             }),
